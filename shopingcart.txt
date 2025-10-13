@@ -34,3 +34,9 @@
         }
         return cartData.Split(',').Select(int.Parse).ToList();
     }
+
+       private void SaveCart(List<int> cart)
+       {
+           var cartData = string.Join(",", cart);
+           HttpContext.Session.SetString("Cart", cartData);
+       }
