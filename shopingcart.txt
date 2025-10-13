@@ -15,24 +15,17 @@
         }
 
         SaveCart(cart);
-
-        TempData["msg"] = $"{product.Title} به سبد خرید اضافه شد ✅";
         return RedirectToAction("Products");
     }
 
-    // ✅ این متد رو اصلاح کن که محصولات واقعی رو به ویو بفرسته
     public IActionResult Cart()
     {
         var ids = GetCart();
-
-        // گرفتن محصولات از دیتابیس بر اساس آی‌دی‌ها
         var products = _mydb.Products.Where(row => ids.Contains(row.Id)).ToList();
-
-        // در نهایت همون محصولات رو بده به View
         return View(products);
     }
 
-	// ↓ همون متدهای Session که خودت نوشتی، کاملاً درسته
+
 	private List<int> GetCart()
     {
         var cartData = HttpContext.Session.GetString("Cart");
