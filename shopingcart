@@ -1,0 +1,43 @@
+    public IActionResult AddToCart(int id)
+    {
+        var product = _mydb.Products.Where(row => row.Id == id).FirstOrDefault();
+
+        if (product == null) {
+            return NotFound();
+        }
+
+        var cart = GetCart();
+
+        // جلوگیری از آیتم تکراری
+        if (!cart.Contains(product.Id))
+        {
+            cart.Add(product.Id);
+        }
+
+        SaveCart(cart);
+
+        TempData["msg"] = $"{product.Title} به سبد خرید اضافه شد ✅";
+        return RedirectToAction("Products");
+    }
+
+    // ✅ این متد رو اصلاح کن که محصولات واقعی رو به ویو بفرسته
+    public IActionResult Cart()
+    {
+        var ids = GetCart();
+
+        // گرفتن محصولات از دیتابیس بر اساس آی‌دی‌ها
+        var products = _mydb.Products.Where(row => ids.Contains(row.Id)).ToList();
+
+        // در نهایت همون محصولات رو بده به View
+        return View(products);
+    }
+
+	// ↓ همون متدهای Session که خودت نوشتی، کاملاً درسته
+	private List<int> GetCart()
+    {
+        var cartData = HttpContext.Session.GetString("Cart");
+        if (string.IsNullOrEmpty(cartData)) { 
+            return new List<int>();
+        }
+        return cartData.Split(',').Select(int.Parse).ToList();
+    }
